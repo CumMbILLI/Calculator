@@ -1,0 +1,88 @@
+*,
+*::after, 
+*::before{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.calculator{
+    margin: 0 auto;
+    margin-top: 10px;
+    width: 300px;
+    height: 460px;
+    border: 1px solid black;
+    background-color: rgb(43, 43, 43);
+    user-select: none;
+}
+.output__box{
+    height: 120px;
+    margin-top: 10px;
+}
+.output1{
+    width: 100%;
+    height: 40px;
+    text-align: right;
+    border: 0;
+    font-size: 20px;
+    color: #fff;
+    background-color: transparent;
+    padding-right: 10px;
+}
+.output1:focus{
+    outline: none;
+}
+.output2{
+    width: 100%;
+    height: 80px;
+    text-align: right;
+    font-size: 50px;
+    border: 0;
+    color: #fff;
+    background-color: transparent;
+    padding-right: 10px;
+}
+.output2:focus{
+    outline: none;
+}
+.buttons__box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    margin-top: 30px;
+}
+
+.btn{
+    width: 70px;
+    height: 45px;
+    margin-top: 3px;
+    color: #fff;
+    background-color: #000;
+    font-family: arial;
+    font-size: 16px;
+    cursor: pointer;
+    border: 0;
+}
+
+.btn.btn__sign{
+    background-color: rgb(27, 27, 27);
+}
+
+.btn:hover{
+    background-color: rgb(70, 70, 70);
+    border: 1px solid rgb(116, 116, 116);
+}
+.btn:active{
+    filter: brightness(80%);
+}
+.btn.btn__blue{
+    background-color: rgb(29, 38, 87);
+}
+.btn.btn__blue:hover{
+    filter: brightness(150%);
+}
+.btn.btn__blue:active{
+    filter: brightness(180%);
+}
