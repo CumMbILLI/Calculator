@@ -1,211 +1,194 @@
 let CALCULATOR = document.querySelector(".calculator")
-const NUMBER__ARR = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']
+const ALL_SYMBOL = '% CE C ⟵ 1/x x^2 √x / 7 8 9 X 4 5 6 - 1 2 3 + +/- 0 . ='
+const NUMBER__ARR = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 const SIGN__ARR = ['-', '+', 'X', '/']
 const SIGN__ONE__NUMBER = ['x^2', '1/x', '%', '√x']
 
-let btn = CALCULATOR.querySelectorAll('.btn')
-let outputSecond = CALCULATOR.querySelector('.output1')
-let outputMain = CALCULATOR.querySelector('.output2')
+const buttonsBox = CALCULATOR.querySelector('.buttons__box')
+let outputSecond = CALCULATOR.querySelector('.output_second')
+let outputMain = CALCULATOR.querySelector('.output_main')
+outputMain.innerHTML = '0'
 
+let signOne = ''
 let firstNumber = ''
 let secondNumber = ''
 let sign = ''
 let result = ''
 
-function clearAll(){
+const clearAll = () => {
+    signOne = ''
     firstNumber = ''
     secondNumber = ''
-    sign = ''
     result = ''
-    outputSecond.value = ''
-    outputMain.value = "0"
+    sign = ''
+    outputMain.innerHTML = '0'
+    outputSecond.innerHTML = ''
 }
 
-function calculation(){
-    if(SIGN__ARR.includes(sign)){
-        switch (sign) {
-            case "+": {
-                    result = (+firstNumber) + (+secondNumber)
-                    outputSecond.value = `${firstNumber} ${sign} ${secondNumber} =`
-                    outputMain.value = result
-            }break;
-            case "-": {
-                result = (+firstNumber) - (+secondNumber)
-                outputSecond.value = `${firstNumber} ${sign} ${secondNumber} =`
-                outputMain.value = result
-            }break;
-            case "X": {
-                result = (+firstNumber) * (+secondNumber)
-                outputSecond.value = `${firstNumber} ${sign} ${secondNumber} =`
-                outputMain.value = result
-            }break;
-            case "/": {
-                if (secondNumber !== '0') {
-                    result = (+firstNumber) / (+secondNumber)
-                    outputSecond.value = `${firstNumber} ${sign} ${secondNumber} =`
-                    outputMain.value = result
-                } else {
-                    clearAll()
-                    outputMain.value = "Ошибка!"
-                }
-            }break;
-       }
-    }
-    else if(SIGN__ONE__NUMBER.includes(sign)){
-        if(firstNumber === ''){
-            firstNumber = '0'
-        }
-        switch (sign) {
-            case "x^2": {
-               
-                result = Math.pow(firstNumber, 2)
-                outputSecond.value = `Math.pow(${firstNumber})`
-                outputMain.value = result
-            }break;
-            case "1/x":{
-                if(firstNumber !== '0'){
-                    result = 1/firstNumber
-                    outputSecond.value = `1/${firstNumber}`
-                    outputMain.value = result
-                }
-                else{
-                    clearAll()
-                    outputMain.value = 'Ошибка!'
-                }
-            }break;
-            case "√x":{
-                result = Math.sqrt(firstNumber)
-                outputMain.value = result
-                outputSecond.value = `Math.sqrt(${firstNumber})`
-            }break;
-        }
+const outputResult = () => {
+    outputMain.innerHTML = +result.toFixed(2)
+    outputSecond.innerHTML = `${firstNumber} ${sign} ${secondNumber} =`
+}
+
+const calculation = () => {
+    if (result !== '') firstNumber = result
+    if(secondNumber === '') secondNumber = '0'
+    
+    switch (sign) {
+        case '+': {
+            result = +firstNumber + +secondNumber
+            outputResult()
+        }break;
+        case '-': {
+            result = +firstNumber - +secondNumber
+            outputResult()
+        }break;
+        case 'X': {
+            result = +firstNumber * +secondNumber
+            outputResult ()
+        }break;
+        case '/': {
+            secondNumber !== '0'? (result = +firstNumber / +secondNumber, outputResult()) :
+            (clearAll(), outputMain.innerHTML = 'Ошибка / на 0')
+        }break;
+        default: {
+            clearAll()
+            outputMain.innerHTML = 'Ошибка'
+        }break;
     }
 }
 
-function clickButton() {
-    const key = this.innerHTML
-    outputMain.value = ''
-
-    if (NUMBER__ARR.includes(key)) {
-        if (secondNumber === '' && sign === '') {
-            firstNumber += key
-            outputMain.value = firstNumber
-        }
-        else if (sign !== '' && firstNumber !== '') {
-            secondNumber += key
-            outputSecond.value = `${firstNumber} ${sign} `
-            outputMain.value = secondNumber
-        }
-        return
+const signOneNumber = (num)=> {
+    switch(signOne){
+        case 'x^2': {
+            num = Math.pow(num, 2)
+        }break;
+        case '1/x':{
+            num !== '0' ? num = 1/num : outputMain.innerHTML = "ошибка"
+        }break;
+        case '√x':{
+            num = Math.sqrt(num)
+        }break;
+        case '%':{
+            if(secondNumber !== '0' && secondNumber !== '' && result === '') num = secondNumber = (firstNumber * secondNumber)/100
+            
+            else {
+                clearAll()
+                num = ''
+            }
+        }break;
+        default:{
+            console.log("ошибка");
+        }break;
     }
 
-    if (SIGN__ARR.includes(key)) {
-        if (firstNumber === '') {
-            firstNumber = '0'
-            sign = key
-            outputSecond.value = `${firstNumber} ${sign} `
-            outputMain.value = '0'
-        }
-        else if(result !== ''){
-            firstNumber = result
-            sign = key
-            result = ''   
-            secondNumber = ''
-            outputSecond.value = `${firstNumber} ${sign} `
-            outputMain.value = '0'
-        }
-        else {
-            sign = key
-            outputSecond.value = `${firstNumber} ${sign} `
-            outputMain.value = '0'
-        }
-        return
+    if(!Number.isInteger(num) && num !== '') num = num.toFixed(5)
+
+    if(sign !== '' && result === ''){
+        secondNumber = num
+        outputMain.innerHTML = secondNumber
     }
-
-    if(SIGN__ONE__NUMBER.includes(key) && key !== '%'){
-        sign = key
-        console.log(sign);
-        calculation()
+    if(sign === '') {
+        firstNumber = num
+        outputMain.innerHTML = firstNumber
     }
+    if(result !== ''){
+        result = num
+        outputSecond.innerHTML = ''
+        outputMain.innerHTML = result
+    }
+    if(outputMain.innerHTML === '') outputMain.innerHTML = '0'
+}
 
-    if(key === '%'){
-        if(firstNumber !== '' && sign !== ''){
-            if(secondNumber === '' && secondNumber === '0') secondNumber = '0'
+const otherSymbol = (symbol)=> {
+    if(firstNumber === '') firstNumber = '0'
+    if(secondNumber === '') secondNumber = '0'
 
-            else secondNumber = (firstNumber * secondNumber)/100
+    switch(symbol){
+        case '=':{
+            if(sign === '') return
+            calculation()
+        }break;
+        case 'CE':{
+            if(sign !== '' && result === '') secondNumber = ''  
+            else if(result !== '') clearAll()
+            else firstNumber = ''
 
-            outputSecond.value = `${firstNumber} ${sign} ${secondNumber}`
-            outputMain.value = secondNumber
-        }
-        else{
+            outputMain.innerHTML = '0'
+        }break;
+        case 'C':{
             clearAll()
-        }
-    }
-    if(key === "+/-"){
-        let num = 0
-        if(sign === ''){
-            if(firstNumber === '' || firstNumber === '0') return outputMain.value = '0'
-            num = firstNumber
-            firstNumber = num *= -1
-            outputMain.value = firstNumber
-        }
-        else if(result === ''){
-            if(secondNumber === '' || secondNumber === '0') return outputMain.value = '0'
-            num = secondNumber
-            secondNumber = num *= -1
-            outputMain.value = secondNumber
-        }
-        else if(result !== ''){
-            if(result === '0') clearAll()
-            num = result
-            result = num *= -1
-            outputSecond.value = ''
-            outputMain.value = result
-        }
-    }  
-    if (key === '=') {
-        if(secondNumber === '') secondNumber = firstNumber
+        }break;
+        case '+/-':{
+            if (sign === '') outputMain.innerHTML = firstNumber *= -1
+            if(sign !== '' && result === '') outputMain.innerHTML = secondNumber *= -1
+            if(result !== '') outputMain.innerHTML = result *= -1
+            
+        }break;
+        case '.':{
+            if(sign !== '' && result === '') {
+                if(!secondNumber.includes('.')){
+                    secondNumber += symbol
+                    outputMain.innerHTML = secondNumber
+                }
+                else return
+            }
+            else if(sign === ''){
+                if(!firstNumber.includes('.')){
+                    firstNumber += symbol
+                    outputMain.innerHTML = firstNumber
+                }
+                else return
+            }
+            else {
+                clearAll()
+                firstNumber +='0' + symbol
+                outputMain.innerHTML = firstNumber
+            }  
+        }break;
+        case '⟵':{
+            result !== ''? clearAll() :
+            sign === '' ? (firstNumber = firstNumber.substring(0, firstNumber.length-1), outputMain.innerHTML = firstNumber) :
+            (secondNumber = secondNumber.substring(0,secondNumber.length-1), outputMain.innerHTML = secondNumber)
 
-        if(result !== ""){
-            firstNumber = result
-            result = ''
-        }
-        calculation()       
-    }
-
-    if (key === "CE") {
-        if (result !== '' || sign === '') {
+            if(outputMain.innerHTML === '') outputMain.innerHTML = '0'
+        }break;
+        default:{
             clearAll()
+            outputMain.innerHTML = 'Ошибка'
         } 
-
-        else {
-            secondNumber = ''
-            outputMain.value = '0'
-        }
-    }
-    if (key === "C") {
-        clearAll()
-        return
-    }
-    if(key === "⟵"){
-        if(sign === ''){
-            firstNumber = firstNumber.substring(0, firstNumber.length -1)
-            outputMain.value = firstNumber
-        }
-        else if(sign !== '' && result === ''){
-            secondNumber = secondNumber.substring(0, secondNumber.length -1)
-            outputMain.value = secondNumber
-        }
-        else if(result !== ''){
-            outputSecond.value = ''
-            outputMain.value = result
-        }
-    }
-    if(outputMain.value === ''){
-        outputMain.value = '0'
     }
 }
 
-for (let i = 0; i < btn.length; i++) {
-    btn[i].addEventListener("click", clickButton)
+const clickButton = (keyPress) => {
+    NUMBER__ARR.includes(keyPress) ? (
+            firstNumber !== '', sign !== '', secondNumber !== '', result !== ''? clearAll() :
+            sign === '' ? (firstNumber += keyPress, outputMain.innerHTML = firstNumber) :
+            result !== '' ? (firstNumber = keyPress, outputMain.innerHTML = firstNumber, outputSecond.innerHTML = '') :
+            (secondNumber += keyPress, outputMain.innerHTML = secondNumber)
+        ) :
+        SIGN__ARR.includes(keyPress) ? (
+            secondNumber = '',
+            
+            firstNumber === ''? firstNumber = '0' :
+            firstNumber !== '', result !== '' ? (firstNumber = result, result = '', sign = keyPress, outputSecond.innerHTML = `${firstNumber} ${sign} `,
+                outputMain.innerHTML = '0') :
+            (sign = keyPress, outputSecond.innerHTML = `${firstNumber} ${sign} `,
+                outputMain.innerHTML = '0')
+        ) :
+        SIGN__ONE__NUMBER.includes(keyPress) ? (
+            signOne = keyPress,
+            signOneNumber(outputMain.innerHTML)
+        ) :
+        otherSymbol(keyPress)       
 }
+
+ALL_SYMBOL.split(' ').map(elem => {
+    NUMBER__ARR.includes(elem) ? buttonsBox.insertAdjacentHTML('beforeend', `<button class = "btn" value="${elem}">${elem}</button>`) :
+        elem === '=' ? buttonsBox.insertAdjacentHTML('beforeend', `<button class = "btn btn__blue" value="${elem}">${elem}</button>`) :
+        buttonsBox.insertAdjacentHTML('beforeend', `<button class = "btn btn__sign" value="${elem}">${elem}</button>`)
+})
+
+CALCULATOR.querySelectorAll('.btn').forEach(elem => {
+    elem.addEventListener("click", () => clickButton(elem.value))
+});
